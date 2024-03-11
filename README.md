@@ -1,6 +1,7 @@
 # LLC1 Document API
 
-This is the repository for the LLC1 API used to collate the information required to generate an LLC1 document.
+This is the repository for the LLC1 API used to collate the information required to generate an LLC1 document. This application is built to run on our common development environment (common dev-env), which you can read more about here: https://github.com/LandRegistry/common-dev-env
+
 
 ### Documentation
 

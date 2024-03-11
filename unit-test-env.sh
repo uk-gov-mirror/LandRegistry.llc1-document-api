@@ -1,0 +1,26 @@
+# Environment variable dummy values for testing purposes
+export APP_NAME=llc1-document-api 
+export DEFAULT_TIMEOUT="30"
+export LOG_LEVEL="DEBUG"
+export PDF_GENERATION_API="http://pdf-generation-api:8080/v1.0/llc1"
+export PDF_GENERATION_API_ROOT="http://pdf-generation-api:8080"
+export STORAGE_API="http://storage-api:8080/v1.0/storage"
+export SQL_HOST="postgres"
+export SQL_DATABASE="llc_document_db"
+export SQL_PASSWORD="llc_document_password"
+export APP_SQL_USERNAME="llc_document_user"
+export SQL_USE_ALEMBIC_USER="false"
+export ALEMBIC_SQL_USERNAME="root"
+export MAX_HEALTH_CASCADE=6
+export AUTHENTICATION_API_URL="http://dev-search-authentication-api:8080/v2.0"
+export AUTHENTICATION_API_ROOT="http://dev-search-authentication-api:8080"
+export STORAGE_API_ROOT="http://storage-api:8080"
+export REPORT_API_SQL_USERNAME="llc_document_report_user"
+export REPORT_API_SQL_PASSWORD="llc_document_report_password"
+export SQLALCHEMY_POOL_RECYCLE="3300"
+export ASYNC_PDF_TIMEOUT="300"
+export CALLBACK_PREFIX="http://llc1-document-api:8080"
+export FLASK_APP='llc1_document_api.main'
+export SEARCH_LOCAL_LAND_CHARGE_API_URL="http://search-local-land-charge-api:8080"
+export SEARCH_QUERY_BUCKET="paid-search-query"
+export SEARCH_QUERY_TIMEOUT="900"

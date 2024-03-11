@@ -1,6 +1,6 @@
-import simplejson as json
-
 from unittest import TestCase
+
+import simplejson as json
 from llc1_document_api.validators.payload_validator import PayloadValidator
 
 

@@ -1,7 +1,8 @@
--- Create database
-CREATE DATABASE llc1_document_api_db;
+-- Create llc_document_db
+CREATE DATABASE llc_document_db;
 
---Create user for DB
-CREATE ROLE llc1_document_api_db_user with LOGIN password 'password';
+--Create user for llc_document DB
+CREATE ROLE llc_document_user with LOGIN password 'llc_document_password';
 
-\c llc1_document_api_db;
+\c llc_document_db;
+CREATE EXTENSION postgis;

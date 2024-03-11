@@ -1,4 +1,5 @@
 from flask import current_app, g
+from llc1_document_api.config import STORAGE_API
 from llc1_document_api.exceptions import ApplicationError
 
 
@@ -30,3 +31,18 @@ class StorageAPIService(object):
                 response.status_code,
                 response.text))
         raise ApplicationError('Failed to get external url', 'STORAGE-01', 500)
+
+    @staticmethod
+    def save_files(files, bucket, logger=None, requests=None):
+        if not logger:
+            logger = current_app.logger
+        if not requests:
+            requests = g.requests
+
+        request_path = "{}/{}".format(STORAGE_API, bucket)
+
+        logger.info("Calling storage api via this URL: %s", request_path)
+        response = requests.post(request_path, files=files)
+        if response.status_code == 201:
+            return response.json()
+        raise ApplicationError("Failed to store document", "ST01")

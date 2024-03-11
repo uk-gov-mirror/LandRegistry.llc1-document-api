@@ -1,6 +1,6 @@
-from llc1_document_api import main
 from flask import url_for
 from flask_testing import TestCase
+from llc1_document_api import main
 
 
 class TestGeneral(TestCase):

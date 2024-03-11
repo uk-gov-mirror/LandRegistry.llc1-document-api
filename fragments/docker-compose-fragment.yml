@@ -2,12 +2,17 @@ version: '2'
 services:
   llc1-document-api:
     container_name: llc1-document-api
-    build: /vagrant/apps/llc1-document-api
+    build:
+      context: ./llc1-document-api
+      # To allow a matching user to the user running the dev env to be created for running the container
+      args:
+        - OUTSIDE_UID=${OUTSIDE_UID}
+        - OUTSIDE_GID=${OUTSIDE_GID}
     restart: on-failure
     ports:
       - "9999:8080"
     volumes:
-      - /vagrant/apps/llc1-document-api:/src
+      - ./llc1-document-api:/src:delegated
     logging:
       driver: syslog
       options:

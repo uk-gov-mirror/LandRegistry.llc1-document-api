@@ -1,25 +1,17 @@
-from flask_logconfig import LogConfig
-import logging
-import json
-import traceback
-from flask import g, ctx, request
-from flask_sqlalchemy import SQLAlchemy
 import collections
+import json
+import logging
+import traceback
 
-# Add custom log level for performance platform logs
-PERFORMANCE_PLATFORM_LOG_LEVEL_NUM = 51
-logging.addLevelName(PERFORMANCE_PLATFORM_LOG_LEVEL_NUM, "PERFORMANCE_PLATFORM")
-
-
-def performance_platform(self, message, *args, **kws):
-    self._log(PERFORMANCE_PLATFORM_LOG_LEVEL_NUM, message, args, **kws)
-
-
-logging.Logger.performance_platform = performance_platform
+from flask import ctx, g, request
+from flask_logconfig import LogConfig
+from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
 
 # Create empty extension objects here
 logger = LogConfig()
 db = SQLAlchemy()
+migrate = Migrate()
 
 
 def register_extensions(app):
@@ -30,6 +22,10 @@ def register_extensions(app):
 
     # Database
     db.init_app(app)
+
+    # Migrate
+    migrate.init_app(app, db)
+
     app.logger.info("Extensions registered")
 
 

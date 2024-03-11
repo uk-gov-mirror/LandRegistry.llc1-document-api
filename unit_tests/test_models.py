@@ -1,6 +1,87 @@
-from unittest import TestCase
+import json
 from datetime import datetime
+from unittest import TestCase
+
 from llc1_document_api.models import SearchItem
+
+POLYGON_FC_GC = {
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {
+                "type": "GeometryCollection",
+                "geometries": [
+                    {
+                        "type": "Polygon",
+                        "coordinates": [
+                                [
+                                    [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    [
+                                        1.0,
+                                        0.0
+                                    ],
+                                    [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    [
+                                        0.0,
+                                        1.0
+                                    ],
+                                    [
+                                        0.0,
+                                        0.0
+                                    ]
+                                ]
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}
+
+POLYGON_FC = {
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {
+                "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    0.0,
+                                    0.0
+                                ],
+                                [
+                                    1.0,
+                                    0.0
+                                ],
+                                [
+                                    1.0,
+                                    1.0
+                                ],
+                                [
+                                    0.0,
+                                    1.0
+                                ],
+                                [
+                                    0.0,
+                                    0.0
+                                ]
+                            ]
+                        ]
+            }
+        }
+    ]
+}
 
 
 class TestModels(TestCase):
@@ -42,3 +123,18 @@ class TestModels(TestCase):
         formatted_id = search_item.formatted_id()
         expected = "999 999 999"
         self.assertEqual(formatted_id, expected)
+
+    def test_search_item_with_geom_gc(self):
+        search_item = SearchItem(datetime.now(), "", search_extent=POLYGON_FC_GC)
+        self.assertIsNotNone(search_item.search_geom)
+        self.assertEqual(json.loads(json.dumps(search_item.search_extent)), POLYGON_FC)
+
+    def test_search_item_with_geom_fc(self):
+        search_item = SearchItem(datetime.now(), "", search_extent=POLYGON_FC)
+        self.assertIsNotNone(search_item.search_geom)
+        self.assertEqual(json.loads(json.dumps(search_item.search_extent)), POLYGON_FC)
+
+    def test_search_item_with_null_geom(self):
+        search_item = SearchItem(datetime.now(), "")
+        self.assertIsNone(search_item.search_geom)
+        self.assertIsNone(search_item.search_extent)

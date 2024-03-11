@@ -1,2 +1,2 @@
 ---
-commodities: ["postgres", "logging"]
+commodities: ["postgres-13", "logging"]

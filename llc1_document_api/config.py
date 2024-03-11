@@ -3,6 +3,7 @@ from urllib.parse import quote_plus
 
 FLASK_LOG_LEVEL = os.environ['LOG_LEVEL']
 COMMIT = os.environ['COMMIT']
+DEFAULT_TIMEOUT = int(os.environ['DEFAULT_TIMEOUT'])
 APP_NAME = os.environ['APP_NAME']
 PDF_GENERATION_API = os.environ['PDF_GENERATION_API']
 
@@ -12,11 +13,13 @@ AUTHENTICATION_API_URL = os.environ['AUTHENTICATION_API_URL']
 STORAGE_API = os.environ['STORAGE_API']
 AUTHENTICATION_API_ROOT = os.environ['AUTHENTICATION_API_ROOT']
 STORAGE_API_ROOT = os.environ['STORAGE_API_ROOT']
+SEARCH_LOCAL_LAND_CHARGE_API_URL = os.environ['SEARCH_LOCAL_LAND_CHARGE_API_URL']
 
 DEPENDENCIES = {
     "pdf-generation-api": PDF_GENERATION_API_ROOT,
     "storage-api": STORAGE_API_ROOT,
-    'authentication-api': AUTHENTICATION_API_ROOT
+    'authentication-api': AUTHENTICATION_API_ROOT,
+    "search-local-land-charges-api": SEARCH_LOCAL_LAND_CHARGE_API_URL
 }
 
 SQL_HOST = os.environ['SQL_HOST']
@@ -32,11 +35,19 @@ if os.environ['SQL_USE_ALEMBIC_USER'] == 'yes':
 else:
     FINAL_SQL_USERNAME = APP_SQL_USERNAME
 
-SQLALCHEMY_DATABASE_URI = 'postgres://{0}:{1}@{2}/{3}'.format(
+SQLALCHEMY_DATABASE_URI = 'postgresql://{0}:{1}@{2}/{3}'.format(
     FINAL_SQL_USERNAME, quote_plus(SQL_PASSWORD), SQL_HOST, SQL_DATABASE)
-SQLALCHEMY_DATABASE_URI_ALEMBIC = 'postgres://{0}:{1}@{2}/{3}'.format(
+SQLALCHEMY_DATABASE_URI_ALEMBIC = 'postgresql://{0}:{1}@{2}/{3}'.format(
     FINAL_SQL_USERNAME, SQL_PASSWORD, SQL_HOST, SQL_DATABASE)
-SQLALCHEMY_POOL_RECYCLE = int(os.environ['SQLALCHEMY_POOL_RECYCLE'])
+SQLALCHEMY_ENGINE_OPTIONS = {'pool_recycle': int(os.environ['SQLALCHEMY_POOL_RECYCLE'])}
+SQLALCHEMY_TRACK_MODIFICATIONS = False  # Explicitly set this in order to remove warning on run
+
+ASYNC_PDF_TIMEOUT = int(os.environ['ASYNC_PDF_TIMEOUT'])
+
+CALLBACK_PREFIX = os.environ['CALLBACK_PREFIX']
+
+SEARCH_QUERY_TIMEOUT = int(os.environ['SEARCH_QUERY_TIMEOUT'])
+SEARCH_QUERY_BUCKET = os.environ['SEARCH_QUERY_BUCKET']
 
 LOGCONFIG = {
     'version': 1,

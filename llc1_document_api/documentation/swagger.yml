@@ -1,0 +1,512 @@
+openapi: 3.0.1
+info:
+  title: LLC1 Document API
+  version: 1.0.0
+servers:
+- url: /
+security:
+- JWTAuth: []
+paths:
+  /v1.0/generate:
+    post:
+      description: |
+        Generate an LLC1 PDF and return the URL to the document.
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              required:
+              - extents
+              - source
+              type: object
+              properties:
+                description:
+                  type: string
+                extents:
+                  $ref: '#/components/schemas/feature_collection'
+                source:
+                  type: string
+                parent_search_id:
+                  type: number
+                charges:
+                  type: array
+                  items:
+                    type: object
+                    properties: {}
+                format:
+                  type: string
+        required: true
+      responses:
+        201:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reference_number:
+                    type: string
+                  document_url:
+                    type: string
+                  external_url:
+                    type: string
+                  number_of_charges:
+                    type: number
+        400:
+          description: Bad request
+          content: {}
+        500:
+          description: Application error
+          content: {}
+      x-codegen-request-body-name: Extents
+  /v1.0/generate_async:
+    post:
+      description: |
+        Generate an LLC1 PDF asynchronously
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              required:
+              - extents
+              - source
+              type: object
+              properties:
+                description:
+                  type: string
+                extents:
+                  $ref: '#/components/schemas/feature_collection'
+                source:
+                  type: string
+                parent_search_id:
+                  type: number
+                charges:
+                  type: array
+                  items:
+                    type: object
+                    properties: {}
+                format:
+                  type: string
+                contact_id:
+                  type: string
+        required: true
+      responses:
+        201:
+          description: Successful response for non-PDF
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reference_number:
+                    type: string
+                  status:
+                    type: string
+        202:
+          description: Task to create PDF successfully created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reference_number:
+                    type: string
+                  status:
+                    type: string
+        400:
+          description: Bad request
+          content: {}
+        500:
+          description: Application error
+          content: {}
+      x-codegen-request-body-name: Extents
+  /v1.0/poll_llc1/{search_ref}:
+    get:
+      description: |
+        Poll for creation of PDF
+      parameters:
+      - name: search_ref
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        201:
+          description: Task to create PDF successfully completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reference_number:
+                    type: string
+                  document_url:
+                    type: string
+                  external_url:
+                    type: string
+                  number_of_charges:
+                    type: number
+        202:
+          description: Task still underway
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        404:
+          description: Search reference not found
+          content: {}
+        500:
+          description: Application error
+          content: {}
+  /v1.0/pdf_callback/{search_ref}:
+    post:
+      description: |
+        Generate an LLC1 PDF asynchronously
+      parameters:
+      - name: search_ref
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              required:
+              - result
+              - status
+              type: object
+              properties:
+                status:
+                  type: string
+                result:
+                  type: object
+                  properties: {}
+        required: true
+      responses:
+        202:
+          description: PDF result recorded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        400:
+          description: Bad request
+          content: {}
+        500:
+          description: Application error
+          content: {}
+      x-codegen-request-body-name: Result
+  /v1.0/paid-searches/{search_id}:
+    get:
+      description: |
+        Return an LLC search based on provided search ID.
+      parameters:
+      - name: search_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  date_of_search:
+                    type: string
+                  document:
+                    type: string
+                  source:
+                    type: string
+                  parent_search_id:
+                    type: number
+                  search_area_description:
+                    type: string
+                  generation_status:
+                    type: string
+                  external_url:
+                    type: string
+                  charges:
+                    type: array
+                    items:
+                      type: object
+                      properties: {}
+        404:
+          description: Search not found
+          content: {}
+  /v1.0/paid-searches/query:
+    post:
+      description: Make paid search query
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              required:
+              - end_timestamp
+              - start_timestamp
+              type: object
+              properties:
+                extent:
+                  $ref: '#/components/schemas/feature_collection'
+                start_timestamp:
+                  type: string
+                  format: datetime
+                end_timestamp:
+                  type: string
+                  format: datetime
+        required: true
+      responses:
+        202:
+          description: Request accepted
+          content:
+            '*/*':
+              schema:
+                type: object
+                properties:
+                  request_timestamp:
+                    type: string
+                    description: Timestamp of the request
+                  completion_timestamp:
+                    type: string
+                    description: Timestamp of the request completion
+                  userid:
+                    type: string
+                    description: Userid of the requester
+                  document:
+                    type: string
+                    description: Path to the document
+                  external_url:
+                    type: string
+                    description: External URL to the document
+                  status:
+                    type: string
+                    description: Status of the request "STARTED", "COMPLETED" or "FAILED"
+      x-codegen-request-body-name: query
+  /v1.0/paid-searches/query/{search_query_id}:
+    get:
+      description: Get search query status
+      parameters:
+      - name: search_query_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Request information
+          content:
+            '*/*':
+              schema:
+                type: object
+                properties:
+                  request_timestamp:
+                    type: string
+                    description: Timestamp of the request
+                  completion_timestamp:
+                    type: string
+                    description: Timestamp of the request completion
+                  userid:
+                    type: string
+                    description: Userid of the requester
+                  document:
+                    type: string
+                    description: Path to the document
+                  external_url:
+                    type: string
+                    description: External URL to the document
+                  status:
+                    type: string
+                    description: Status of the request "STARTED", "COMPLETED" or "FAILED"
+        404:
+          description: id not found
+          content: {}
+  /v1.0/llc1_languages:
+    get:
+      description: |
+        List of available languages
+      responses:
+        200:
+          description: Successful response hashmap of langcode and language
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        500:
+          description: Application error
+          content: {}
+components:
+  schemas:
+    feature_collection:
+      required:
+      - features
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - FeatureCollection
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/feature'
+    feature:
+      required:
+      - geometry
+      - properties
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - Feature
+        geometry:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/polygon'
+            - $ref: '#/components/schemas/multi_polygon'
+            - $ref: '#/components/schemas/line_string'
+            - $ref: '#/components/schemas/multi_line_string'
+            - $ref: '#/components/schemas/point_geometry'
+            - $ref: '#/components/schemas/multi_point_geometry'
+            - $ref: '#/components/schemas/geometry_collection'
+        properties:
+          type: object
+    point:
+      maxItems: 2
+      minItems: 2
+      type: array
+      items:
+        type: number
+    point_geometry:
+      required:
+      - coordinates
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - Point
+        coordinates:
+          $ref: '#/components/schemas/point'
+    multi_point_geometry:
+      required:
+      - coordinates
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - MultiPoint
+        coordinates:
+          type: array
+          items:
+            $ref: '#/components/schemas/point'
+    polygon:
+      required:
+      - coordinates
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - Polygon
+        coordinates:
+          type: array
+          items:
+            type: array
+            items:
+              $ref: '#/components/schemas/point'
+    multi_polygon:
+      required:
+      - coordinates
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - MultiPolygon
+        coordinates:
+          type: array
+          items:
+            type: array
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/point'
+    line_string:
+      required:
+      - coordinates
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - LineString
+        coordinates:
+          type: array
+          items:
+            $ref: '#/components/schemas/point'
+    multi_line_string:
+      required:
+      - coordinates
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - MultiLineString
+        coordinates:
+          type: array
+          items:
+            type: array
+            items:
+              $ref: '#/components/schemas/point'
+    geometry_collection:
+      required:
+      - geometries
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - GeometryCollection
+        geometries:
+          type: array
+          items:
+            type: object
+            oneOf:
+              - $ref: '#/components/schemas/polygon'
+              - $ref: '#/components/schemas/multi_polygon'
+              - $ref: '#/components/schemas/line_string'
+              - $ref: '#/components/schemas/multi_line_string'
+              - $ref: '#/components/schemas/point_geometry'
+              - $ref: '#/components/schemas/multi_point_geometry'
+              - $ref: '#/components/schemas/geometry_collection'
+  securitySchemes:
+    JWTAuth:
+      type: apiKey
+      name: Authorizaton
+      in: header

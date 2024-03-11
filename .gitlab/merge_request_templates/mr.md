@@ -1,12 +1,15 @@
 ## Summary of the changes in this merge request
 
-## Before submitting this merge request...
+## Before submitting this merge request..
 
 ## Mandatory
-* [ ] unit tests have been added or updated
-* [ ] flake8 reports no linting violations
+* [ ]  Unit tests are all passing
+* [ ]  No flake8 linting violations
+* [ ]  Requirements and dependencies have been updated
 
 ## If applicable
-* [ ] the full acceptance test suite has been run and passed
-* [ ] swagger documentation updated
-* [ ] readme updated
+* [ ]  Swagger spec updated
+* [ ]  README updated
+* [ ]  The full acceptance test suite has been run and passed
+* [ ]  Secret store updated
+* [ ]  Corresponding Puppet repository updated
